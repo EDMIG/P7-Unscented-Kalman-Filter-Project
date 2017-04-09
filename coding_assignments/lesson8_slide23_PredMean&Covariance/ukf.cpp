@@ -71,6 +71,7 @@ void UKF::PredictMeanAndCovariance(VectorXd* x_out, MatrixXd* P_out) {
         // state difference
         VectorXd x_diff = Xsig_pred.col(i) - x;
         //angle normalization
+        // ALWAYS when subtract angles make sure to normalize angles!!
         while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
         while (x_diff(3)<-M_PI) x_diff(3)+=2.*M_PI;
 
