@@ -122,10 +122,18 @@ void UKF::UpdateState(VectorXd* x_out, MatrixXd* P_out) {
         Tc = Tc + weights(i) * x_diff * z_diff.transpose();
     }
     //calculate Kalman gain K;
-    MatrixXd K = MatrixXd(n_z, n_z);
-    K = Tc * S.inverse();
+    MatrixXd K = Tc * S.inverse();
+
+    // measurement difference for latest prediction and latest measurement
+    VectorXd z_diff = z - z_pred;
+
+    //angle normalization
+    // ALWAYS when subtract angles make sure to normalize angles!!
+    while (z_diff(1)> M_PI) z_diff(1)-=2.*M_PI;
+    while (z_diff(1)<-M_PI) z_diff(1)+=2.*M_PI;
+
     //update state mean and covariance matrix
-    x = x + K * (z - z_pred);
+    x = x + K * z_diff;
     P = P - K * S * K.transpose();
 
 
