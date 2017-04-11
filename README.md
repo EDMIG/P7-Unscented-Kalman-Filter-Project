@@ -17,7 +17,7 @@ Self-Driving Car Engineer Nanodegree Program
 4. Run it: `./UnscentedKF path/to/input.txt path/to/output.txt`. You can find
    some sample inputs in 'data/'.
     - eg. `./UnscentedKF ../data/sample-laser-radar-measurement-data-1.txt output.txt`
-5. To force using only Radar or Laser set use_laser_=false or use_radar_=false accordingly. And re-build project.
+5. To force using only Radar or Laser set use_laser_=false or use_radar_=false in src/ukf.cpp accordingly. And re-build project.
 
 ## Editor Settings
 
