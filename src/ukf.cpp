@@ -14,7 +14,7 @@ UKF::UKF() {
     use_laser_ = true;
 
     // if this is false, radar measurements will be ignored (except during init)
-    use_radar_ = true;
+    use_radar_ = false;
 
 
     // Process noise standard deviation longitudinal acceleration in m/s^2
@@ -156,11 +156,25 @@ void UKF::ProcessMeasurement(MeasurementPackage meas_package) {
         double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;  //dt - expressed in seconds
         time_us_ = meas_package.timestamp_;
 
+        while (dt > 0.1)
+        {
+            const double delta_t = 0.05;
+            UKF::Prediction(delta_t);
+            dt -= delta_t;
+        }
+
         UKF::Prediction(dt);
         UKF::UpdateRadar(meas_package);
     } else if (meas_package.sensor_type_ == MeasurementPackage::LASER and use_laser_) {
         double dt = (meas_package.timestamp_ - time_us_) / 1000000.0;  //dt - expressed in seconds
         time_us_ = meas_package.timestamp_;
+
+        while (dt > 0.1)
+        {
+            const double delta_t = 0.05;
+            UKF::Prediction(delta_t);
+            dt -= delta_t;
+        }
 
         UKF::Prediction(dt);
         UKF::UpdateLidar(meas_package);
@@ -258,6 +272,8 @@ void UKF::Prediction(double delta_t) {
     for (int i=0; i < 2 * n_aug_ + 1; i++) {
         // state difference
         VectorXd x_diff = Xsig_pred_.col(i) - x_;
+        //VectorXd x_diff = Xsig_pred_.col(i) - Xsig_pred_.col(0);
+
         //angle normalization
         // ALWAYS when subtract angles make sure to normalize angles!!
         // atan2(sin(th),cos(th))
@@ -290,7 +306,11 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
         double py = Xsig_pred_(1, i);
 
         //calculate mean predicted measurement
-        Zsig.col(i) << px, py;
+        if (px == 0 && py == 0) {
+            Zsig.col(i) << 0, 0;
+        } else {
+            Zsig.col(i) << px, py;
+        }
     }
 
     //mean predicted measurement
@@ -324,6 +344,8 @@ void UKF::UpdateLidar(MeasurementPackage meas_package) {
     for (int i=0; i < 2 * n_aug_ + 1; i++) {
         // state difference
         VectorXd x_diff = Xsig_pred_.col(i) - x_;
+        //VectorXd x_diff = Xsig_pred_.col(i) - Xsig_pred_.col(0);
+
         //angle normalization
         // ALWAYS when subtract angles make sure to normalize angles!!
         while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
@@ -388,7 +410,12 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
         double rod = (px * v1 + py * v2) / ro;
 
         //calculate mean predicted measurement
-        Zsig.col(i) << ro, fi, rod;
+        if (px == 0 && py == 0) {
+            Zsig.col(i) << 0, 0, 0;
+        } else {
+            Zsig.col(i) << ro, fi, rod;
+        }
+
     }
 
     //mean predicted measurement
@@ -424,6 +451,8 @@ void UKF::UpdateRadar(MeasurementPackage meas_package) {
     for (int i=0; i < 2 * n_aug_ + 1; i++) {
         // state difference
         VectorXd x_diff = Xsig_pred_.col(i) - x_;
+        //VectorXd x_diff = Xsig_pred_.col(i) - Xsig_pred_.col(0);
+
         //angle normalization
         // ALWAYS when subtract angles make sure to normalize angles!!
         while (x_diff(3)> M_PI) x_diff(3)-=2.*M_PI;
