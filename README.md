@@ -5,8 +5,8 @@ Project results:
 
 RMSE from data/sample-laser-radar-measurement-data-1.txt and data/sample-laser-radar-measurement-data-2.txt
 
-0.0793, 0.0867, 0.603, 0.586
-0.172, 0.177, 0.218, 0.279
+* 0.0793, 0.0867, 0.603, 0.586
+* 0.172, 0.177, 0.218, 0.279
 
 ---
 
