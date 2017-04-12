@@ -74,7 +74,7 @@ NIS value for RADAR must be under 7.815 for 95% of measurement and for LIDAR it 
 
 So if NIS values are greater than KF underestimates uncertainity in system and if NIS values are lower that means thtat KF overestimates uncertainity in system.
 
-[Resulting plots](plots.html)
+See [resulting plots](plots.html) or check visualize_results.ipynb
 
 ---
 
